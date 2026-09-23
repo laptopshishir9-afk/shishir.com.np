@@ -90,7 +90,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     <>
       <header
         id="main-header"
-        className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-2xs py-3.5 transition-all"
+        className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-2xs py-3 transition-all"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           {/* =========================================================================
@@ -99,7 +99,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div
             id="brand-header-info"
             onClick={handleAvatarClick}
-            className="flex items-center gap-3 cursor-pointer group select-none"
+            className="flex items-center gap-3 cursor-pointer group select-none shrink-0"
             title="Shishir Pokhrel Portfolio"
           >
             {/* Small circular profile photo with thin yellow border */}
@@ -131,24 +131,70 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           {/* =========================================================================
-              RIGHT: SIMPLE CONTACT ME BUTTON + HAMBURGER MENU
+              CENTER / DESKTOP: HOME, ABOUT, EDUCATION, SKILLS, HOBBIES, ... ON TOP
              ========================================================================= */}
-          <div className="flex items-center gap-3">
+          <nav id="desktop-nav" className="hidden lg:flex items-center gap-1">
+            {NAV_ITEMS.map((item) => {
+              const isActive =
+                currentPage === 'home' && activeSection === item.href.substring(1);
+              return (
+                <a
+                  key={item.href}
+                  id={`nav-link-${item.href.substring(1)}`}
+                  href={item.href}
+                  onClick={() => handleNavClick(item.href)}
+                  className={`relative px-3 py-1.5 text-xs font-bold rounded-lg transition-colors duration-150 ${
+                    isActive
+                      ? 'text-blue-900 bg-sky-100/70 shadow-2xs'
+                      : 'text-slate-700 hover:text-blue-900 hover:bg-sky-50'
+                  }`}
+                >
+                  {item.label}
+                  {isActive && (
+                    <motion.span
+                      layoutId="activeNavIndicator"
+                      className="absolute bottom-0 left-2 right-2 h-[2.5px] bg-amber-400 rounded-full"
+                      transition={{ type: 'spring', stiffness: 450, damping: 35 }}
+                    />
+                  )}
+                </a>
+              );
+            })}
+
+            {/* Dedicated Read More / Full Bio button */}
+            <button
+              type="button"
+              onClick={onNavigateAboutMe}
+              className={`ml-1.5 px-3 py-1.5 rounded-lg text-xs font-extrabold transition-colors flex items-center gap-1.5 ${
+                currentPage === 'about-me'
+                  ? 'bg-amber-400 text-blue-950 border border-amber-500 shadow-2xs'
+                  : 'text-blue-900 bg-amber-100/80 hover:bg-amber-200 border border-amber-300'
+              }`}
+            >
+              <BookOpen className="w-3.5 h-3.5" />
+              <span>Read More</span>
+            </button>
+          </nav>
+
+          {/* =========================================================================
+              RIGHT: SIMPLE CONTACT ME BUTTON + HAMBURGER MENU (FOR MOBILE / TABLET)
+             ========================================================================= */}
+          <div className="flex items-center gap-2.5 shrink-0">
             <a
               id="header-contact-btn"
               href="#contact"
               onClick={() => handleNavClick('#contact')}
-              className="inline-flex items-center justify-center px-5 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm transition-all shadow-xs hover:shadow-sm"
+              className="inline-flex items-center justify-center px-4 sm:px-5 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm transition-all shadow-xs hover:shadow-sm"
             >
               <span>Contact Me</span>
             </a>
 
-            {/* Hamburger Button: Square light-blue rounded box matching screenshot */}
+            {/* Mobile / Tablet Hamburger Button */}
             <button
               id="header-hamburger-menu-btn"
               type="button"
               onClick={() => setMenuOpen(!menuOpen)}
-              className="p-2.5 rounded-xl bg-sky-50 hover:bg-sky-100 border border-sky-200 text-slate-800 transition-colors cursor-pointer focus:outline-none"
+              className="lg:hidden p-2.5 rounded-xl bg-sky-50 hover:bg-sky-100 border border-sky-200 text-slate-800 transition-colors cursor-pointer focus:outline-none"
               aria-label="Toggle navigation menu"
             >
               {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -158,7 +204,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       </header>
 
       {/* =========================================================================
-          SLIDE-OUT / POPUP HAMBURGER NAVIGATION DRAWER
+          SLIDE-OUT / POPUP HAMBURGER NAVIGATION DRAWER (FOR MOBILE SCREENS)
          ========================================================================= */}
       <AnimatePresence>
         {menuOpen && (
